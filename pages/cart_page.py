@@ -35,7 +35,7 @@ class CartPage:
 
     def remove_product(self, product_name):
         """Remove a product from cart by product name."""
-        xpath = f"//div[@class='cart_item'][.//div[contains(@class,'inventory_item_name') and text()='{product_name}']]//button"
+        xpath = f"//div[@class='cart_item'][.//div[contains(@class,'inventory_item_name') and normalize-space(text())='{product_name}']]//button"
         button = self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         button.click()
         return self

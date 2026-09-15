@@ -47,7 +47,7 @@ class InventoryPage:
 
     def add_product_to_cart(self, product_name):
         """Click 'Add to cart' button for a specific product by title."""
-        xpath = f"//div[@class='inventory_item'][.//div[contains(@class,'inventory_item_name') and text()='{product_name}']]//button"
+        xpath = f"//div[@class='inventory_item'][.//div[contains(@class,'inventory_item_name') and normalize-space(text())='{product_name}']]//button"
         button = self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         button.click()
         return self
