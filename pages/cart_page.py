@@ -20,10 +20,11 @@ class CartPage:
         self._checkout_button = (By.ID, "checkout")
 
     def is_on_cart_page(self):
-        """Verify navigation to the Cart page."""
+        """Verify navigation to the Cart page with explicit wait."""
         try:
+            self.wait.until(EC.url_contains("/cart.html"))
             element = self.wait.until(EC.visibility_of_element_located(self._title))
-            return "your cart" in element.text.lower() and "/cart.html" in self.driver.current_url
+            return "your cart" in element.text.lower()
         except Exception:
             return False
 

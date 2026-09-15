@@ -47,16 +47,20 @@ class InventoryPage:
         return prices
 
     def add_product_to_cart(self, product_name):
-        """Click 'Add to cart' button for a specific product by title."""
+        """Click 'Add to cart' button for a specific product and wait until button changes to 'Remove'."""
         xpath = f"//div[@class='inventory_item'][.//div[contains(@class,'inventory_item_name') and normalize-space(text())='{product_name}']]//button"
         button = self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         button.click()
+        # Explicitly wait for DOM update (button text transitions from 'Add to cart' to 'Remove')
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, xpath), "Remove"))
         return self
 
     def open_cart(self):
-        """Click the cart icon to navigate to the cart page."""
+        """Click the cart icon and explicitly wait for navigation to cart page."""
         cart = self.wait.until(EC.element_to_be_clickable(self._cart_icon))
         cart.click()
+        # Wait until URL contains /cart.html
+        self.wait.until(EC.url_contains("/cart.html"))
         return self
 
     def sort_products(self, sort_option):
