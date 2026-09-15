@@ -2,6 +2,7 @@
 InventoryPage class representing the product catalog page.
 """
 
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -61,11 +62,20 @@ class InventoryPage:
     def sort_products(self, sort_option):
         """
         Sort products using the sort dropdown.
-        Options: 'az' (A to Z), 'za' (Z to A), 'lohi' (low to high), 'hilo' (high to low).
+        Includes DOM stabilization delay and retry mechanism for headless CI environments.
         """
-        select_elem = self.wait.until(EC.element_to_be_clickable(self._sort_select))
-        select = Select(select_elem)
-        select.select_by_value(sort_option)
+        for attempt in range(2):
+            try:
+                select_elem = self.wait.until(EC.element_to_be_clickable(self._sort_select))
+                time.sleep(0.5)
+                select = Select(select_elem)
+                select.select_by_value(sort_option)
+                time.sleep(0.5)
+                return self
+            except Exception as e:
+                if attempt == 1:
+                    raise e
+                time.sleep(1)
         return self
 
     def get_cart_badge_count(self):

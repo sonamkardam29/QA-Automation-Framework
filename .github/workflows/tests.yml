@@ -25,6 +25,10 @@ jobs:
         with:
           chrome-version: stable
 
+      - name: Increase Shared Memory /dev/shm Size
+        run: |
+          sudo mount -o remount,size=2G /dev/shm || true
+
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
