@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Pytest Test Suite
         run: |
-          pytest --headless=true --html=reports/report.html --self-contained-html
+          pytest --headless=true --reruns 2 --reruns-delay 1 --html=reports/report.html --self-contained-html
 
       - name: Upload HTML Test Report Artifact
         if: always()

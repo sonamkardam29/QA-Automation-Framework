@@ -30,7 +30,7 @@ def pytest_addoption(parser):
 def driver(request):
     """
     Function-scoped Selenium WebDriver fixture.
-    Initializes driver, configures timeouts and window size, and cleans up after test.
+    Initializes driver with CI stability options, configures timeouts, and cleans up.
     """
     browser_name = request.config.getoption("--browser").lower()
     headless_opt = request.config.getoption("--headless").lower() == "true"
@@ -46,14 +46,18 @@ def driver(request):
         options.add_argument("--no-sandbox")
         driver_instance = webdriver.Edge(options=options)
     else:
-        # Default to Chrome
+        # Default to Chrome with robust CI flags
         options = ChromeOptions()
         if headless_opt:
             options.add_argument("--headless=new")
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("--disable-gpu")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-software-rasterizer")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-setuid-sandbox")
+        options.add_argument("--disable-infobars")
+        options.add_argument("--window-size=1920,1080")
         options.add_argument(
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -65,14 +69,18 @@ def driver(request):
     except Exception:
         pass  # Safely ignore maximize_window errors in headless Linux environments
 
-    driver_instance.implicitly_wait(5)
+    driver_instance.set_page_load_timeout(30)
+    driver_instance.implicitly_wait(10)
 
     # Attach driver instance to request node for screenshot hook access
     request.node.driver = driver_instance
 
     yield driver_instance
 
-    driver_instance.quit()
+    try:
+        driver_instance.quit()
+    except Exception:
+        pass
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

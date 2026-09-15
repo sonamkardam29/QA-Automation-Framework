@@ -5,8 +5,8 @@ Configuration parameters for the SauceDemo QA Automation Framework.
 # Base URL for the demo e-commerce application
 BASE_URL = "https://www.saucedemo.com/"
 
-# Explicit wait timeout in seconds
-EXPLICIT_WAIT = 10
+# Explicit wait timeout in seconds (increased for CI stability)
+EXPLICIT_WAIT = 15
 
 # Test User Credentials provided by SauceDemo
 STANDARD_USER = "standard_user"
